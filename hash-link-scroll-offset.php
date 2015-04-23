@@ -3,13 +3,15 @@
  * Plugin Name: Hash Link Scroll Offset
  * Plugin URI:  http://webdevstudios.com
  * Description: Offset the scroll position of anchored links. Handy if you have a sticky header that covers linked material.
- * Version:     0.1.1
+ * Version:     0.1.2
  * Author:      WebDevStudios
  * Author URI:  http://webdevstudios.com
  * Donate link: http://webdevstudios.com
  * License:     GPLv2+
  * Text Domain: hash_link_scroll_offset
  * Domain Path: /languages
+ * GitHub Plugin URI: https://github.com/WebDevStudios/Hash-Link-Scroll-Offset
+ * GitHub Branch: master
  */
 
 /**
@@ -127,6 +129,7 @@ class Hash_Link_Scroll_Offset {
 		<div class="hash_link_scroll_offset_setting_wrap<?php echo $class; ?>">
 			<input class="small-text" placeholder="50" type="number" step="1" min="1" id="hash_link_scroll_offset" name="hash_link_scroll_offset" value="<?php echo get_option( 'hash_link_scroll_offset', 0 ); ?>"> <?php _e( 'pixels', 'hash_link_scroll_offset' ); ?>
 		</div>
+		<p class="description"><?php _e( 'When the Admin Bar is displayed in your theme, this value is automatically increased by 32px.', 'hash_link_scroll_offset' ); ?></p>
 		<?php
 	}
 
@@ -138,7 +141,10 @@ class Hash_Link_Scroll_Offset {
 	public function enqueue_js() {
 		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_script( 'hash_link_scroll_offset', self::$url . "assets/js/hash-link-scroll-offset$min.js", array( 'jquery' ), self::VERSION, true );
-		wp_localize_script( 'hash_link_scroll_offset', 'hashLinkOffset', get_option( 'hash_link_scroll_offset', 0 ) );
+		wp_localize_script( 'hash_link_scroll_offset', 'hlso_data', array(
+			'admin_bar_showing' => is_admin_bar_showing(),
+			'offset'            => get_option( 'hash_link_scroll_offset', 0 ),
+		) );
 	}
 
 	public function settings_url() {
